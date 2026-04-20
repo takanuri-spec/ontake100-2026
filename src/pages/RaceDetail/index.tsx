@@ -24,8 +24,15 @@ interface AidStation {
 interface PackingItem { id: string; name: string; category: string }
 interface Trip {
   id: string; raceId: string; notes?: string
-  rentalCar?: { reservation: string; departure: string; shop: string }
-  hotel?: { name: string; reservation: string }
+  schedule?: { timing: string; description: string; location?: string; mapUrl?: string }[]
+  rentalCar?: {
+    reservation: string; departure?: string; company?: string
+    pickupLocation?: string; returnLocation?: string; phone?: string; mapUrl?: string
+  }
+  hotel?: {
+    name: string; reservation: string; checkIn?: string; checkOut?: string
+    phone?: string; mapUrl?: string; address?: string; notes?: string
+  }
   dropBagContents?: string[]
   packingList: PackingItem[]
   checkedItems?: Record<string, boolean>

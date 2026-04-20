@@ -14,7 +14,7 @@ function labelOffset(
   mx: number, my: number,
   projPts: [number, number][],
   W: number, H: number,
-): { dx: number; dy: number; anchor: string } {
+): { dx: number; dy: number; anchor: 'inherit' | 'middle' | 'start' | 'end' } {
   // Find closest projected point
   let ci = 0, minD = Infinity
   for (let i = 0; i < projPts.length; i++) {
@@ -32,7 +32,7 @@ function labelOffset(
   const n2x = ty / len,  n2y = -tx / len
   const D = 13
   // Candidates: both normals, then pure up/down as fallback
-  const cands: { dx: number; dy: number; anchor: string }[] = [
+  const cands: { dx: number; dy: number; anchor: 'inherit' | 'middle' | 'start' | 'end' }[] = [
     { dx: n1x * D, dy: n1y * D, anchor: Math.abs(n1x) < 0.4 ? 'middle' : n1x > 0 ? 'start' : 'end' },
     { dx: n2x * D, dy: n2y * D, anchor: Math.abs(n2x) < 0.4 ? 'middle' : n2x > 0 ? 'start' : 'end' },
     { dx: 0, dy: -D, anchor: 'middle' },
@@ -273,8 +273,8 @@ function ElevationProfile({
               fontSize: 11,
               color: '#1c1917',
             }}
-            formatter={(v: number) => [`${v}m`, '標高']}
-            labelFormatter={(v: number) => `${Number(v).toFixed(1)}km`}
+            formatter={((v: unknown) => [`${v}m`, '標高']) as never}
+            labelFormatter={((v: unknown) => `${Number(v).toFixed(1)}km`) as never}
             cursor={{ stroke: '#f59e0b', strokeWidth: 1.5, strokeDasharray: '4 3' }}
           />
           {aidDots.map((dot, i) => (
