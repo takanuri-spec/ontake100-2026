@@ -8,8 +8,18 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  background-color: #F5F3EF;
+  color: #1c1917;
 }
 
 .safe-area-inset-bottom {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Photo placeholder base */
+.photo-placeholder {
+  background: linear-gradient(135deg, #d6d3d1 0%, #a8a29e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
