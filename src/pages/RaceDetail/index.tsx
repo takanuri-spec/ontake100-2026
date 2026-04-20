@@ -236,26 +236,33 @@ function ItineraryPanel({ trip }: { trip: Trip | null }) {
   if (!trip) return (
     <div className="text-stone-400 text-sm py-8 text-center">旅程データなし</div>
   )
+
+  const cardCls = 'bg-white rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.09)] p-4'
+  const labelCls = 'text-xs font-bold text-stone-400 uppercase tracking-wider mb-3'
+  const rowCls = 'flex items-center gap-2 text-xs text-stone-600'
+  const iconCls = 'material-symbols-rounded text-stone-400 shrink-0'
+  const linkCls = 'flex items-center gap-1.5 text-xs text-stone-500 hover:text-stone-800 transition-colors'
+
   return (
     <div className="space-y-4">
       {/* Timeline */}
       {trip.schedule && trip.schedule.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">タイムスケジュール</h4>
+        <div>
+          <h4 className={labelCls}>タイムスケジュール</h4>
           <div className="space-y-2">
             {trip.schedule.map((event, i) => (
-              <div key={i} className="bg-white rounded-2xl p-3 border border-stone-100 shadow-sm">
+              <div key={i} className={cardCls}>
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 pt-0.5">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 mt-1" />
+                  <div className="w-8 h-8 rounded-xl bg-stone-100 flex items-center justify-center shrink-0 mt-0.5">
+                    <span className={iconCls} style={{ fontSize: 16 }}>schedule</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-mono text-emerald-600 font-bold">{event.timing}</div>
-                    <div className="text-sm text-stone-800 mt-1">{event.description}</div>
+                    <div className="text-xs font-mono text-stone-500 font-semibold">{event.timing}</div>
+                    <div className="text-sm text-stone-900 font-medium mt-0.5">{event.description}</div>
                     {event.mapUrl && (
-                      <a href={event.mapUrl} target="_blank" rel="noopener noreferrer"
-                        className="text-xs text-blue-600 hover:underline mt-2 inline-block">
-                        📍 Google Maps を開く
+                      <a href={event.mapUrl} target="_blank" rel="noopener noreferrer" className={`${linkCls} mt-2`}>
+                        <span className={iconCls} style={{ fontSize: 14 }}>location_on</span>
+                        Google Maps を開く
                       </a>
                     )}
                   </div>
@@ -268,37 +275,43 @@ function ItineraryPanel({ trip }: { trip: Trip | null }) {
 
       {/* Rental car */}
       {trip.rentalCar && (
-        <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
-          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">レンタカー</h4>
-          <div className="space-y-2.5">
-            <div>
-              <div className="text-sm text-stone-900 font-bold">
-                🚗 {trip.rentalCar.company}
+        <div className={cardCls}>
+          <h4 className={labelCls}>レンタカー</h4>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-stone-100 flex items-center justify-center shrink-0">
+                <span className={iconCls} style={{ fontSize: 18 }}>directions_car</span>
               </div>
-              <div className="text-xs text-stone-400 mt-1">
-                予約番号: <span className="font-mono text-emerald-600 font-bold">{trip.rentalCar.reservation}</span>
+              <div>
+                <div className="text-sm text-stone-900 font-bold">{trip.rentalCar.company}</div>
+                <div className="text-xs text-stone-400 mt-0.5">
+                  予約番号: <span className="font-mono font-semibold text-stone-700">{trip.rentalCar.reservation}</span>
+                </div>
               </div>
             </div>
-            <div className="text-xs text-stone-600">
-              <div>📍 ピックアップ: {trip.rentalCar.pickupLocation}</div>
-              {trip.rentalCar.returnLocation && trip.rentalCar.returnLocation !== trip.rentalCar.pickupLocation && (
-                <div>📍 返却: {trip.rentalCar.returnLocation}</div>
-              )}
-            </div>
-            {trip.rentalCar.phone && (
-              <div className="text-xs">
-                <a href={`tel:${trip.rentalCar.phone.replace(/[^0-9]/g, '')}`} className="text-blue-600 hover:underline">
-                  📞 {trip.rentalCar.phone}
-                </a>
+            {trip.rentalCar.pickupLocation && (
+              <div className={rowCls}>
+                <span className={iconCls} style={{ fontSize: 14 }}>login</span>
+                ピックアップ: {trip.rentalCar.pickupLocation}
               </div>
             )}
-            {trip.rentalCar.mapUrl && (
-              <div>
-                <a href={trip.rentalCar.mapUrl} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:underline">
-                  📍 Google Maps を開く
-                </a>
+            {trip.rentalCar.returnLocation && trip.rentalCar.returnLocation !== trip.rentalCar.pickupLocation && (
+              <div className={rowCls}>
+                <span className={iconCls} style={{ fontSize: 14 }}>logout</span>
+                返却: {trip.rentalCar.returnLocation}
               </div>
+            )}
+            {trip.rentalCar.phone && (
+              <a href={`tel:${trip.rentalCar.phone.replace(/[^0-9]/g, '')}`} className={linkCls}>
+                <span className={iconCls} style={{ fontSize: 14 }}>call</span>
+                {trip.rentalCar.phone}
+              </a>
+            )}
+            {trip.rentalCar.mapUrl && (
+              <a href={trip.rentalCar.mapUrl} target="_blank" rel="noopener noreferrer" className={linkCls}>
+                <span className={iconCls} style={{ fontSize: 14 }}>location_on</span>
+                Google Maps を開く
+              </a>
             )}
           </div>
         </div>
@@ -306,43 +319,56 @@ function ItineraryPanel({ trip }: { trip: Trip | null }) {
 
       {/* Hotel */}
       {trip.hotel && (
-        <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
-          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">宿泊</h4>
-          <div className="space-y-2.5">
-            <div>
-              <div className="text-sm text-stone-900 font-bold">
-                🏨 {trip.hotel.name}
+        <div className={cardCls}>
+          <h4 className={labelCls}>宿泊</h4>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-stone-100 flex items-center justify-center shrink-0">
+                <span className={iconCls} style={{ fontSize: 18 }}>hotel</span>
               </div>
-              <div className="text-xs text-stone-400 mt-1">
-                予約番号: <span className="font-mono text-emerald-600 font-bold">{trip.hotel.reservation}</span>
+              <div>
+                <div className="text-sm text-stone-900 font-bold">{trip.hotel.name}</div>
+                <div className="text-xs text-stone-400 mt-0.5">
+                  予約番号: <span className="font-mono font-semibold text-stone-700">{trip.hotel.reservation}</span>
+                </div>
               </div>
             </div>
-            <div className="text-xs text-stone-600">
-              <div>📅 チェックイン: {trip.hotel.checkIn}</div>
-              <div>📅 チェックアウト: {trip.hotel.checkOut}</div>
-            </div>
+            {(trip.hotel.checkIn || trip.hotel.checkOut) && (
+              <div className="flex gap-4">
+                {trip.hotel.checkIn && (
+                  <div className={rowCls}>
+                    <span className={iconCls} style={{ fontSize: 14 }}>login</span>
+                    {trip.hotel.checkIn}
+                  </div>
+                )}
+                {trip.hotel.checkOut && (
+                  <div className={rowCls}>
+                    <span className={iconCls} style={{ fontSize: 14 }}>logout</span>
+                    {trip.hotel.checkOut}
+                  </div>
+                )}
+              </div>
+            )}
             {trip.hotel.address && (
-              <div className="text-xs text-stone-600">
-                📍 {trip.hotel.address}
+              <div className={rowCls}>
+                <span className={iconCls} style={{ fontSize: 14 }}>location_on</span>
+                {trip.hotel.address}
               </div>
             )}
             {trip.hotel.phone && (
-              <div className="text-xs">
-                <a href={`tel:${trip.hotel.phone.replace(/[^0-9]/g, '')}`} className="text-blue-600 hover:underline">
-                  📞 {trip.hotel.phone}
-                </a>
-              </div>
+              <a href={`tel:${trip.hotel.phone.replace(/[^0-9]/g, '')}`} className={linkCls}>
+                <span className={iconCls} style={{ fontSize: 14 }}>call</span>
+                {trip.hotel.phone}
+              </a>
             )}
             {trip.hotel.mapUrl && (
-              <div>
-                <a href={trip.hotel.mapUrl} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:underline">
-                  📍 Google Maps を開く
-                </a>
-              </div>
+              <a href={trip.hotel.mapUrl} target="_blank" rel="noopener noreferrer" className={linkCls}>
+                <span className={iconCls} style={{ fontSize: 14 }}>location_on</span>
+                Google Maps を開く
+              </a>
             )}
             {trip.hotel.notes && (
-              <div className="text-xs text-stone-600 italic border-t border-stone-100 pt-2 mt-2">
+              <div className="text-xs text-stone-500 italic pt-1 border-t border-stone-100">
                 {trip.hotel.notes}
               </div>
             )}
@@ -352,11 +378,11 @@ function ItineraryPanel({ trip }: { trip: Trip | null }) {
 
       {/* Drop bag */}
       {trip.dropBagContents && trip.dropBagContents.length > 0 && (
-        <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
-          <h4 className="text-xs font-bold text-amber-600 mb-3">ドロップバッグ (CP1 54km)</h4>
+        <div className={cardCls}>
+          <h4 className={labelCls}>ドロップバッグ (CP1 54km)</h4>
           <div className="flex flex-wrap gap-1.5">
             {trip.dropBagContents.map((item, i) => (
-              <span key={i} className="text-xs bg-amber-100 border border-amber-200 text-amber-800 px-2 py-0.5 rounded-full">
+              <span key={i} className="text-xs bg-stone-100 text-stone-700 px-2.5 py-1 rounded-full font-medium">
                 {item}
               </span>
             ))}
@@ -366,9 +392,12 @@ function ItineraryPanel({ trip }: { trip: Trip | null }) {
 
       {/* Notes */}
       {trip.notes && (
-        <div className="bg-blue-50 rounded-2xl p-4 border border-blue-200">
-          <div className="text-xs text-blue-600 font-bold mb-2">📝 メモ</div>
-          <p className="text-sm text-blue-700">{trip.notes}</p>
+        <div className={cardCls}>
+          <div className="flex items-center gap-2 mb-2">
+            <span className={iconCls} style={{ fontSize: 16 }}>edit_note</span>
+            <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">メモ</span>
+          </div>
+          <p className="text-sm text-stone-700">{trip.notes}</p>
         </div>
       )}
     </div>
