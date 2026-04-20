@@ -5,31 +5,28 @@ function LoginScreen() {
   const { signIn } = useAuth()
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Hero photo placeholder */}
-      <div className="flex-1 relative overflow-hidden min-h-[55vh]"
-        style={{ background: 'linear-gradient(160deg, #1a2e1a 0%, #2d5a27 30%, #4a7c59 55%, #7db88a 75%, #b8d4c0 100%)' }}>
-        {/* Mountain silhouette */}
-        <svg className="absolute bottom-0 w-full" viewBox="0 0 400 160" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-          <polygon points="0,160 60,90 130,120 200,40 270,110 340,70 400,95 400,160" fill="#0a1a0a" opacity="0.6" />
-          <polygon points="0,160 40,110 120,140 200,55 280,130 360,90 400,110 400,160" fill="#0a1a0a" opacity="0.4" />
-        </svg>
-        {/* Light haze */}
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 60% 30%, rgba(255,255,255,0.15) 0%, transparent 60%)' }} />
-        {/* Title overlay */}
+      {/* Hero photo */}
+      <div className="flex-1 relative overflow-hidden min-h-[58vh]">
+        <img
+          src="/images/2026-ontake100-bg1.webp"
+          alt="OSJ ONTAKE 100"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/20 to-black/65" />
         <div className="absolute bottom-10 left-6 text-white">
-          <p className="text-xs font-semibold tracking-widest uppercase opacity-70 mb-1">Trail Running</p>
+          <p className="text-xs font-semibold tracking-widest uppercase opacity-60 mb-1">Trail Running</p>
           <p className="text-2xl font-black leading-tight">Let's conquer<br />the mountain!</p>
         </div>
       </div>
 
       {/* White bottom card */}
-      <div className="bg-white rounded-t-3xl -mt-6 relative z-10 px-6 pt-8 pb-10 shadow-2xl">
+      <div className="bg-white rounded-t-3xl -mt-6 relative z-10 px-6 pt-8 pb-10 shadow-[0_-8px_32px_rgba(0,0,0,0.15)]">
         <h1 className="text-2xl font-black text-stone-900 mb-1">ONTAKE 100</h1>
-        <p className="text-stone-500 text-sm mb-7">2026.07.19 — 109km / +3,780m</p>
+        <p className="text-stone-400 text-sm mb-7">2026.07.19 — 109km / +3,780m</p>
 
         <button
           onClick={signIn}
-          className="w-full flex items-center justify-center gap-3 bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-800 transition-colors mb-4"
+          className="w-full flex items-center justify-center gap-3 bg-stone-900 text-white font-bold py-4 rounded-2xl hover:bg-stone-800 transition-colors shadow-[0_4px_16px_rgba(0,0,0,0.25)]"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

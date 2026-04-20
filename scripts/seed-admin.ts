@@ -32,7 +32,7 @@ const races = [
   {
     id: 'sim-toki-river',
     name: '第4回 Around Toki River', nameJa: '第4回 Around Toki River',
-    date: '2026-06-14', startTime: '08:30',
+    date: '2026-06-14', startTime: '08:15',
     distanceKm: 56.2, elevationGainM: 3386, elevationLossM: 3386,
     cutoffMinutes: 675, location: '越生町・埼玉県',
     lat: 35.985, lng: 139.290,
@@ -105,8 +105,19 @@ const giHeatPlan = {
 const trips = [
   {
     id: 'trip-toki-river', raceId: 'sim-toki-river',
-    rentalCar: { reservation: 'B04104', departure: '2026-06-13T15:30', return: '2026-06-15T08:00', shop: '下北沢駅前' },
-    notes: '越生町まで約1.5h。前日移動。',
+    rentalCar: {
+      reservation: 'B04104', company: 'ニッポンレンタカー',
+      departure: '2026-06-13T15:30', return: '2026-06-15T08:00',
+      pickupLocation: '下北沢駅前', returnLocation: '下北沢駅前',
+      phone: '03-6418-1500', mapUrl: 'https://maps.app.goo.gl/下北沢',
+    },
+    schedule: [
+      { timing: '2026-06-13 15:30', description: 'ニッポンレンタカー 下北沢駅前でピックアップ', mapUrl: 'https://maps.app.goo.gl/下北沢' },
+      { timing: '2026-06-14 08:15', description: 'Around Toki River スタート（ニューサンピア埼玉おごせ）', mapUrl: 'https://maps.app.goo.gl/ニューサンピア埼玉おごせ' },
+      { timing: '2026-06-14 19:30', description: 'Around Toki River フィニッシュ・着替え・宿へ向かう' },
+      { timing: '2026-06-15 08:00', description: 'ニッポンレンタカー 返却' },
+    ],
+    notes: '越生町まで約1.5h。GI本番リハーサル。',
     packingList: [
       { id: 'p1', name: 'ヘッドランプ', category: 'mandatory', checked: false },
       { id: 'p2', name: 'レインウェア上下', category: 'mandatory', checked: false },
@@ -120,8 +131,19 @@ const trips = [
   },
   {
     id: 'trip-hinohara', raceId: 'sim-hinohara',
-    rentalCar: { reservation: 'B04128', departure: '2026-06-20T20:00', return: '2026-06-21T20:00', shop: '下北沢駅前' },
-    notes: '檜原村まで約1h。前日夜発。会場近くで仮眠。',
+    rentalCar: {
+      reservation: 'B04128', company: 'ニッポンレンタカー',
+      departure: '2026-06-20T20:00', return: '2026-06-21T20:00',
+      pickupLocation: '下北沢駅前', returnLocation: '下北沢駅前',
+      phone: '03-6418-1500', mapUrl: 'https://maps.app.goo.gl/下北沢',
+    },
+    schedule: [
+      { timing: '2026-06-20 20:00', description: 'ニッポンレンタカー 下北沢駅前でピックアップ', mapUrl: 'https://maps.app.goo.gl/下北沢' },
+      { timing: '2026-06-21 07:00', description: '翠夏巡嶺 スタート（檜原村）', mapUrl: 'https://maps.app.goo.gl/檜原村' },
+      { timing: '2026-06-21 19:00', description: '翠夏巡嶺 フィニッシュ・着替え・宿へ向かう' },
+      { timing: '2026-06-21 20:00', description: 'ニッポンレンタカー 返却' },
+    ],
+    notes: '檜原村まで約1h。前日夜発。下り強化リハーサル。',
     packingList: [
       { id: 'p1', name: 'ヘッドランプ', category: 'mandatory', checked: false },
       { id: 'p2', name: 'レインウェア上下', category: 'mandatory', checked: false },
@@ -134,9 +156,30 @@ const trips = [
   },
   {
     id: 'trip-ontake', raceId: 'ontake100-2026',
-    rentalCar: { reservation: 'B04527', departure: '2026-07-18T13:00', return: '2026-07-20T20:00', shop: '下北沢駅前' },
-    hotel: { name: 'ホテルやまぶき', reservation: '5123', checkIn: '2026-07-19', checkOut: '2026-07-20', notes: '馬刺し&お酒プラン。レース後の回復宿。' },
-    notes: '王滝村まで約3.5h。7/18受付・前泊、7/19 00:00スタート。',
+    rentalCar: {
+      reservation: 'B04527', company: 'ニッポンレンタカー',
+      departure: '2026-07-18T13:00', return: '2026-07-20T20:00',
+      pickupLocation: '下北沢駅前', returnLocation: '下北沢駅前',
+      phone: '03-6418-1500', mapUrl: 'https://maps.app.goo.gl/下北沢',
+    },
+    hotel: {
+      name: 'ホテルやまぶき', reservation: '5123',
+      checkIn: '2026-07-19', checkOut: '2026-07-20',
+      phone: '0264-58-2626', address: '長野県木曽郡木祖村薮原1151-6',
+      mapUrl: 'https://maps.app.goo.gl/ホテルやまぶき',
+      notes: '馬刺し&お酒 信州名物セット付。レース後の回復宿。',
+    },
+    schedule: [
+      { timing: '2026-07-18 13:00', description: 'ニッポンレンタカー 下北沢駅前でピックアップ', mapUrl: 'https://maps.app.goo.gl/下北沢' },
+      { timing: '2026-07-18 16:30', description: 'ホテルやまぶき チェックイン・最終チェック', mapUrl: 'https://maps.app.goo.gl/ホテルやまぶき' },
+      { timing: '2026-07-18 19:00', description: '夕食・最終準備・早期就寝（ゴール実行時刻予定: 16h15m = 午前4時頃）' },
+      { timing: '2026-07-19 00:00', description: 'OSJ ONTAKE 100 スタート（御岳ベースキャンプ）', mapUrl: 'https://maps.app.goo.gl/御岳ベースキャンプ' },
+      { timing: '2026-07-19 16:15', description: 'ONTAKE100 フィニッシュ予定（11時間15分カットオフ）' },
+      { timing: '2026-07-19 17:00', description: 'ホテルやまぶき チェックイン・回復食・水風呂・睡眠' },
+      { timing: '2026-07-20 10:00', description: 'ホテルやまぶき チェックアウト・朝食' },
+      { timing: '2026-07-20 20:00', description: 'ニッポンレンタカー 下北沢駅前で返却' },
+    ],
+    notes: '王滝村まで約3.5h。7/18受付・前泊。',
     dropBagContents: ['着替え上下', 'ウインドシェル', 'ゲイター', '追加ジェル×5', 'PH1500×3', '塩タブ補充', '靴下替え', '予備電池', 'バンダナ×2'],
     packingList: [
       { id: 'p1',  name: 'ヘッドランプ（＋予備電池）', category: 'mandatory',   checked: false },

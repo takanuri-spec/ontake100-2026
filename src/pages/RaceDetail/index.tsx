@@ -42,7 +42,7 @@ const GPX_URL: Record<string, string> = {
 
 const START_OFFSET: Record<string, number> = {
   'ontake100-2026': 0,      // 00:00 start
-  'sim-toki-river': 0,
+  'sim-toki-river': 495,    // 08:15 start = 495min from midnight
   'sim-hinohara':   420,    // 07:00 start = 420min from midnight
 }
 
@@ -54,14 +54,14 @@ const TRIP_ID: Record<string, string> = {
 
 const RACE_URLS: Record<string, { label: string; url: string }[]> = {
   'ontake100-2026': [
-    { label: 'OSJ ONTAKE 100 公式', url: 'https://www.powersports.co.jp/osj/ontake/' },
+    { label: 'OSJ ONTAKE 100 公式', url: 'https://www.outdoorsportsjapan.com/trail/ontake100/race-ontake100/' },
     { label: 'ITRA レース情報',      url: 'https://itra.run/Races/RaceDetails/OSJ.ONTAKE100/2026' },
   ],
   'sim-toki-river': [
-    { label: 'NPO-SUP 公式ページ', url: 'https://npo-sup.org/blog/event/' },
+    { label: 'Around Toki River 公式', url: 'https://npo-sup.org/blog/event/atr_vol04/' },
   ],
   'sim-hinohara': [
-    { label: 'ひのはらトレイルレース 公式', url: 'https://hinohara-trail.jp/' },
+    { label: '翠夏巡嶺（ひのはら50） 公式', url: 'https://carbuncletl.wixsite.com/hinohara50/%E5%A4%A7%E4%BC%9A%E6%A6%82%E8%A6%81' },
   ],
 }
 
@@ -70,10 +70,10 @@ const CATEGORY_LABEL: Record<string, string> = {
   medical: '医療', clothing: '衣類', other: 'その他',
 }
 
-const RACE_HERO: Record<string, React.CSSProperties> = {
-  'ontake100-2026': { background: 'linear-gradient(160deg, #0c1a0c 0%, #1a3a1a 40%, #2d5a27 70%, #4a7c59 100%)' },
-  'sim-toki-river': { background: 'linear-gradient(160deg, #0f172a 0%, #1e3a5f 45%, #1d4ed8 75%, #38bdf8 100%)' },
-  'sim-hinohara':   { background: 'linear-gradient(160deg, #052e16 0%, #14532d 40%, #166534 70%, #4ade80 100%)' },
+const RACE_HERO_IMG: Record<string, string> = {
+  'ontake100-2026': '/images/2026-ontake100-sp.webp',
+  'sim-toki-river': '/images/aroundtokiriver.jpg',
+  'sim-hinohara':   '/images/suikajunnrei.avif',
 }
 
 // ─── Checklist data ───────────────────────────────────────────────────────────
@@ -230,34 +230,123 @@ function ItineraryPanel({ trip }: { trip: Trip | null }) {
     <div className="text-stone-400 text-sm py-8 text-center">旅程データなし</div>
   )
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
+      {/* Timeline */}
+      {trip.schedule && trip.schedule.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">タイムスケジュール</h4>
+          <div className="space-y-2">
+            {trip.schedule.map((event, i) => (
+              <div key={i} className="bg-white rounded-2xl p-3 border border-stone-100 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 pt-0.5">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 mt-1" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-mono text-emerald-600 font-bold">{event.timing}</div>
+                    <div className="text-sm text-stone-800 mt-1">{event.description}</div>
+                    {event.mapUrl && (
+                      <a href={event.mapUrl} target="_blank" rel="noopener noreferrer"
+                        className="text-xs text-blue-600 hover:underline mt-2 inline-block">
+                        📍 Google Maps を開く
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Rental car */}
       {trip.rentalCar && (
         <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
-          <div className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">レンタカー</div>
-          <div className="text-sm text-stone-900 font-medium">
-            🚗 日産レンタカー <span className="font-mono text-emerald-600">{trip.rentalCar.reservation}</span>
-          </div>
-          <div className="text-xs text-stone-400 mt-1">
-            {new Date(trip.rentalCar.departure).toLocaleString('ja-JP', {
-              month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
-            })}発 — {trip.rentalCar.shop}
+          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">レンタカー</h4>
+          <div className="space-y-2.5">
+            <div>
+              <div className="text-sm text-stone-900 font-bold">
+                🚗 {trip.rentalCar.company}
+              </div>
+              <div className="text-xs text-stone-400 mt-1">
+                予約番号: <span className="font-mono text-emerald-600 font-bold">{trip.rentalCar.reservation}</span>
+              </div>
+            </div>
+            <div className="text-xs text-stone-600">
+              <div>📍 ピックアップ: {trip.rentalCar.pickupLocation}</div>
+              {trip.rentalCar.returnLocation && trip.rentalCar.returnLocation !== trip.rentalCar.pickupLocation && (
+                <div>📍 返却: {trip.rentalCar.returnLocation}</div>
+              )}
+            </div>
+            {trip.rentalCar.phone && (
+              <div className="text-xs">
+                <a href={`tel:${trip.rentalCar.phone.replace(/[^0-9]/g, '')}`} className="text-blue-600 hover:underline">
+                  📞 {trip.rentalCar.phone}
+                </a>
+              </div>
+            )}
+            {trip.rentalCar.mapUrl && (
+              <div>
+                <a href={trip.rentalCar.mapUrl} target="_blank" rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:underline">
+                  📍 Google Maps を開く
+                </a>
+              </div>
+            )}
           </div>
         </div>
       )}
+
+      {/* Hotel */}
       {trip.hotel && (
         <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
-          <div className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">宿泊</div>
-          <div className="text-sm text-stone-900 font-medium">
-            🏨 {trip.hotel.name} <span className="font-mono text-emerald-600">#{trip.hotel.reservation}</span>
+          <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">宿泊</h4>
+          <div className="space-y-2.5">
+            <div>
+              <div className="text-sm text-stone-900 font-bold">
+                🏨 {trip.hotel.name}
+              </div>
+              <div className="text-xs text-stone-400 mt-1">
+                予約番号: <span className="font-mono text-emerald-600 font-bold">{trip.hotel.reservation}</span>
+              </div>
+            </div>
+            <div className="text-xs text-stone-600">
+              <div>📅 チェックイン: {trip.hotel.checkIn}</div>
+              <div>📅 チェックアウト: {trip.hotel.checkOut}</div>
+            </div>
+            {trip.hotel.address && (
+              <div className="text-xs text-stone-600">
+                📍 {trip.hotel.address}
+              </div>
+            )}
+            {trip.hotel.phone && (
+              <div className="text-xs">
+                <a href={`tel:${trip.hotel.phone.replace(/[^0-9]/g, '')}`} className="text-blue-600 hover:underline">
+                  📞 {trip.hotel.phone}
+                </a>
+              </div>
+            )}
+            {trip.hotel.mapUrl && (
+              <div>
+                <a href={trip.hotel.mapUrl} target="_blank" rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:underline">
+                  📍 Google Maps を開く
+                </a>
+              </div>
+            )}
+            {trip.hotel.notes && (
+              <div className="text-xs text-stone-600 italic border-t border-stone-100 pt-2 mt-2">
+                {trip.hotel.notes}
+              </div>
+            )}
           </div>
         </div>
       )}
-      {!trip.rentalCar && !trip.hotel && (
-        <div className="text-stone-400 text-sm py-4 text-center">旅程情報なし</div>
-      )}
+
+      {/* Drop bag */}
       {trip.dropBagContents && trip.dropBagContents.length > 0 && (
         <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
-          <div className="text-xs font-bold text-amber-600 mb-2">ドロップバッグ (CP1 54km)</div>
+          <h4 className="text-xs font-bold text-amber-600 mb-3">ドロップバッグ (CP1 54km)</h4>
           <div className="flex flex-wrap gap-1.5">
             {trip.dropBagContents.map((item, i) => (
               <span key={i} className="text-xs bg-amber-100 border border-amber-200 text-amber-800 px-2 py-0.5 rounded-full">
@@ -267,8 +356,13 @@ function ItineraryPanel({ trip }: { trip: Trip | null }) {
           </div>
         </div>
       )}
+
+      {/* Notes */}
       {trip.notes && (
-        <p className="text-stone-400 text-xs px-1">{trip.notes}</p>
+        <div className="bg-blue-50 rounded-2xl p-4 border border-blue-200">
+          <div className="text-xs text-blue-600 font-bold mb-2">📝 メモ</div>
+          <p className="text-sm text-blue-700">{trip.notes}</p>
+        </div>
       )}
     </div>
   )
@@ -543,12 +637,16 @@ export default function RaceDetail() {
   }
 
   const cutoffH = (race.cutoffMinutes / 60).toFixed(1).replace('.0', '')
-  const heroStyle = RACE_HERO[raceId] ?? { background: '#d6d3d1' }
+  const heroImg = RACE_HERO_IMG[raceId]
 
   return (
     <div className="-mx-4 -mt-6">
       {/* Full-bleed photo hero */}
-      <div className="relative w-full h-56 overflow-hidden" style={heroStyle}>
+      <div className="relative w-full h-56 overflow-hidden bg-stone-300">
+        {heroImg && (
+          <img src={heroImg} alt={race.name} className="absolute inset-0 w-full h-full object-cover" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/60" />
         {/* Back button */}
         <div className="absolute top-4 left-4 z-20">
           <Link to="/races"
@@ -559,22 +657,14 @@ export default function RaceDetail() {
             </svg>
           </Link>
         </div>
-        {/* Photo placeholder indicator */}
-        <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1">
-          <span className="text-white/60 text-[10px]">📷 写真準備中</span>
-        </div>
-        {/* Mountain SVG */}
-        <svg className="absolute bottom-0 w-full" viewBox="0 0 400 100" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-          <polygon points="0,100 70,55 150,80 200,15 250,75 330,45 400,60 400,100" fill="#0a1a0a" opacity="0.4" />
-        </svg>
         {/* Race name overlay */}
         <div className="absolute bottom-4 left-5 text-white">
           <div className="flex items-center gap-2 mb-1">
             {race.type === 'target'
-              ? <span className="text-[10px] bg-emerald-500 text-white font-bold px-2 py-0.5 rounded-full">TARGET</span>
-              : <span className="text-[10px] bg-blue-500 text-white font-bold px-2 py-0.5 rounded-full">SIM</span>}
+              ? <span className="text-[10px] bg-white text-stone-900 font-black px-2.5 py-0.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.20)]">TARGET</span>
+              : <span className="text-[10px] bg-white text-stone-500 font-bold px-2.5 py-0.5 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.20)]">SIM</span>}
           </div>
-          <h1 className="text-2xl font-black text-white leading-tight">{race.name}</h1>
+          <h1 className="text-2xl font-black text-white leading-tight drop-shadow-sm">{race.name}</h1>
           <p className="text-white/70 text-xs">{race.date} | {race.location}</p>
         </div>
       </div>

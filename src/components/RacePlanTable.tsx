@@ -87,107 +87,114 @@ function SegmentCard({
   }, [raceId, segIdx, paceStr, carb, water, notes])
 
   const inputCls =
-    'bg-stone-800 border border-stone-600 rounded px-2 py-0.5 text-xs text-stone-200 text-center'
+    'bg-white rounded-xl px-3 py-2 text-sm font-mono text-stone-900 text-center shadow-[0_2px_8px_rgba(0,0,0,0.10)] outline-none focus:shadow-[0_2px_12px_rgba(0,0,0,0.18)] transition-shadow w-full'
 
   return (
-    <div className="rounded-xl border border-stone-800 bg-stone-900/60 overflow-hidden">
+    <div className="rounded-2xl bg-white overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.09)]">
       {/* Header row */}
-      <div className="px-4 py-2.5 bg-stone-800/50 flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold text-stone-200">
+      <div className="px-4 py-3 bg-stone-50 flex items-center justify-between gap-2 border-b border-stone-100">
+        <span className="text-sm font-bold text-stone-900">
           {from.name}
-          <span className="text-stone-500 mx-1.5">→</span>
+          <span className="text-stone-300 mx-2">→</span>
           {to.name}
         </span>
-        <span className="text-xs text-stone-500 font-mono shrink-0">{stats.distKm}km</span>
+        <span className="text-xs text-stone-400 font-mono shrink-0">{stats.distKm}km</span>
       </div>
 
-      <div className="px-4 py-3 space-y-2.5">
+      <div className="px-4 py-4 space-y-4">
         {/* Terrain */}
-        <div className="flex gap-4 text-xs">
-          <span className="text-stone-500">D+ <span className="text-emerald-400">+{stats.ascent}m</span></span>
-          <span className="text-stone-500">D- <span className="text-red-400">-{stats.descent}m</span></span>
+        <div className="flex gap-4 text-sm">
+          <span className="text-stone-500">D+ <span className="font-semibold text-stone-800">+{stats.ascent}m</span></span>
+          <span className="text-stone-500">D- <span className="font-semibold text-stone-800">-{stats.descent}m</span></span>
         </div>
 
         {/* Pace + segment time */}
-        <div className="flex items-center gap-3 text-xs">
-          <span className="text-stone-500">ペース</span>
-          {editing ? (
-            <input
-              type="text"
-              value={paceStr}
-              onChange={e => setPaceStr(e.target.value)}
-              onBlur={save}
-              className={`${inputCls} w-14`}
-              placeholder="8:30"
-            />
-          ) : (
-            <span className="font-mono text-stone-200">{paceStr}</span>
-          )}
-          <span className="text-stone-500">/km</span>
-          <span className="text-stone-600">→</span>
-          <span className="font-mono text-stone-300">{fmtHM(segTimeMin)}</span>
+        <div className="space-y-1">
+          <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">ペース</span>
+          <div className="flex items-center gap-3">
+            {editing ? (
+              <input
+                type="text"
+                value={paceStr}
+                onChange={e => setPaceStr(e.target.value)}
+                onBlur={save}
+                className={`${inputCls} max-w-[80px]`}
+                placeholder="8:30"
+              />
+            ) : (
+              <span className="font-mono font-bold text-lg text-stone-900">{paceStr}</span>
+            )}
+            <span className="text-stone-400 text-sm">/km</span>
+            <span className="text-stone-300">→</span>
+            <span className="font-mono text-stone-700 font-semibold">{fmtHM(segTimeMin)}</span>
+          </div>
         </div>
 
         {/* ETA + cutoff */}
-        <div className="flex items-center gap-2 text-xs flex-wrap">
-          <span className="text-stone-500">到着</span>
-          <span className="font-mono font-semibold text-stone-100">{fmtHM(etaMin)}</span>
-          {hasCutoff && (
-            <>
-              <span className="text-stone-700">|</span>
-              <span className="text-stone-500">関門</span>
-              <span className="font-mono text-red-300">{fmtHM(to.cutoffFromStartMin)}</span>
-              <span className={`font-mono font-semibold text-xs ${bufferOk ? 'text-emerald-400' : 'text-red-400'}`}>
-                ({bufferOk ? '+' : '-'}{fmtHM(Math.abs(bufferMin))})
-              </span>
-            </>
-          )}
+        <div className="space-y-1">
+          <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">到着予定</span>
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="font-mono font-bold text-lg text-stone-900">{fmtHM(etaMin)}</span>
+            {hasCutoff && (
+              <>
+                <span className="text-stone-200">|</span>
+                <span className="text-stone-400 text-sm">関門 <span className="font-mono text-stone-700">{fmtHM(to.cutoffFromStartMin)}</span></span>
+                <span className={`font-mono font-bold text-sm px-2 py-0.5 rounded-lg ${
+                  bufferOk
+                    ? 'bg-stone-100 text-stone-700'
+                    : 'bg-red-50 text-red-600'
+                }`}>
+                  {bufferOk ? '+' : '-'}{fmtHM(Math.abs(bufferMin))}
+                </span>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Fuel */}
-        <div className="flex gap-4 text-xs items-center">
-          <span className="text-stone-500">補給</span>
-          {editing ? (
-            <input
-              type="number"
-              value={carb}
-              onChange={e => setCarb(Number(e.target.value))}
-              onBlur={save}
-              className={`${inputCls} w-12`}
-            />
-          ) : (
-            <span className="text-stone-300">{carb}</span>
-          )}
-          <span className="text-stone-500">g/h</span>
-          <span className="text-stone-500">水</span>
-          {editing ? (
-            <input
-              type="number"
-              value={water}
-              onChange={e => setWater(Number(e.target.value))}
-              onBlur={save}
-              className={`${inputCls} w-14`}
-            />
-          ) : (
-            <span className="text-stone-300">{water}</span>
-          )}
-          <span className="text-stone-500">mL/h</span>
+        <div className="space-y-2">
+          <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">補給</span>
+          <div className="flex gap-3 items-end">
+            <div className="flex-1 space-y-1">
+              <div className="text-xs text-stone-400">炭水化物</div>
+              {editing ? (
+                <input type="number" value={carb}
+                  onChange={e => setCarb(Number(e.target.value))} onBlur={save}
+                  className={inputCls} />
+              ) : (
+                <div className="font-mono font-bold text-stone-900">{carb}<span className="text-xs text-stone-400 font-normal ml-1">g/h</span></div>
+              )}
+            </div>
+            <div className="flex-1 space-y-1">
+              <div className="text-xs text-stone-400">水分</div>
+              {editing ? (
+                <input type="number" value={water}
+                  onChange={e => setWater(Number(e.target.value))} onBlur={save}
+                  className={inputCls} />
+              ) : (
+                <div className="font-mono font-bold text-stone-900">{water}<span className="text-xs text-stone-400 font-normal ml-1">mL/h</span></div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Notes */}
         {(editing || notes) && (
-          editing ? (
-            <input
-              type="text"
-              value={notes}
-              onChange={e => setNotes(e.target.value)}
-              onBlur={save}
-              className="w-full bg-stone-800 border border-stone-600 rounded px-2 py-0.5 text-xs text-stone-200"
-              placeholder="メモ（ドロップバッグ・装備変更など）"
-            />
-          ) : (
-            <p className="text-xs text-stone-500 italic">{notes}</p>
-          )
+          <div className="space-y-1">
+            <span className="text-xs font-bold text-stone-400 uppercase tracking-wider">メモ</span>
+            {editing ? (
+              <input
+                type="text"
+                value={notes}
+                onChange={e => setNotes(e.target.value)}
+                onBlur={save}
+                className={`${inputCls} max-w-full text-left`}
+                placeholder="ドロップバッグ・装備変更など"
+              />
+            ) : (
+              <p className="text-sm text-stone-600">{notes}</p>
+            )}
+          </div>
         )}
       </div>
     </div>
@@ -222,19 +229,19 @@ export function RacePlanTable({ raceId, checkpoints, points, startOffsetMin = 0 
   const totalMin = etas[etas.length - 1] - startOffsetMin
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 p-4">
       {/* Summary bar */}
       <div className="flex items-center justify-between">
-        <div className="text-xs text-stone-500">
+        <div className="text-sm text-stone-500">
           計画合計:{' '}
-          <span className="text-stone-200 font-mono font-semibold">{fmtHM(totalMin)}</span>
+          <span className="text-stone-900 font-mono font-bold">{fmtHM(totalMin)}</span>
         </div>
         <button
           onClick={() => setEditing(e => !e)}
-          className={`text-xs px-3 py-1 rounded-lg font-medium transition-colors ${
+          className={`text-sm px-4 py-2 rounded-xl font-semibold transition-all ${
             editing
-              ? 'bg-emerald-700 text-white hover:bg-emerald-600'
-              : 'bg-stone-800 text-stone-400 hover:text-stone-200'
+              ? 'bg-stone-900 text-white shadow-[0_4px_12px_rgba(0,0,0,0.25)]'
+              : 'bg-white text-stone-700 shadow-[0_4px_12px_rgba(0,0,0,0.12)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.18)]'
           }`}
         >
           {editing ? '完了' : '編集'}
@@ -242,7 +249,7 @@ export function RacePlanTable({ raceId, checkpoints, points, startOffsetMin = 0 
       </div>
 
       {loading ? (
-        <div className="text-stone-600 text-sm py-4 text-center">読み込み中…</div>
+        <div className="text-stone-400 text-sm py-4 text-center">読み込み中…</div>
       ) : (
         // key forces remount after initial Firestore load so SegmentCards get correct initial state
         <div key="loaded" className="space-y-2">

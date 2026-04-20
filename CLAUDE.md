@@ -41,14 +41,26 @@ src/
   App.tsx               LoginScreen + authed shell (sticky header, 5-tab bottom nav)
   contexts/AuthContext  Google sign-in via signInWithPopup; gates all routes
   lib/firebase.ts       initializeApp + db/auth/storage exports
+  lib/gpx.ts            GPX parser (haversine distance, cumulative elevation, downsampling, waypoint extraction)
+  lib/strava.ts         Strava OAuth 2.0 flow + activity fetch with token refresh
   hooks/useFirestore.ts useDoc / useCollection / useSubCollection — onSnapshot wrappers
-  pages/{RaceBible,Training,GIHeat,RaceDay,Retro}/index.tsx  one file per tab
-  types/index.ts        Race, AidStation, Segment, TrainingDay, TrainingLoad, FuelingLog,
-                        GISymptom, Trip, PackingItem, RaceDayChecklistItem
+  hooks/useStrava.ts    Strava activity sync & token refresh state
+  components/
+    StrengthPlan.tsx    Session A/B exercise cards with inline keypoint popups
+    CourseMap.tsx       SVG equirectangular course map + recharts elevation profile
+    RacePlanTable.tsx   Editable segment-by-segment race plan (pace, fuel, ETA, cutoff buffer)
+  pages/
+    Training/           Weekly actuals bars (Strava + manual), strength logging
+    GIHeat/             Probiotic 14-day calendar, gut-training scatterplot, weekly health tracker
+    RaceBible/          3-race cards, collapsible course maps + race plans, packing checklist
+    RaceDay/            Race-day timeline & logistics (TBD)
+    Retro/              Post-race debrief template (TBD)
+  types/index.ts        Race, AidStation, TrainingDay, DailyLog, etc.
 scripts/
   seed-admin.ts         Admin SDK seed (preferred — bypasses security rules)
   seed.ts               client SDK seed (legacy)
   serviceAccount.json   gitignored
+public/gpx/             ontake100.gpx, toki-river.gpx, hinohara.gpx (static course files)
 docs/PROJECT_PLAN.md    phases, milestones, risk register
 ```
 
@@ -58,8 +70,10 @@ docs/PROJECT_PLAN.md    phases, milestones, risk register
 races/{raceId}                   3 races: ontake100-2026 (target) + 2 sims
   .aidStations/{aidId}           5 docs for Ontake (25/54/73/83/finish)
   .segments/{segId}              5 segments with planned pace/fuel/water per hour
+  .racePlan/{segId}              Editable segment pace/carb/water/notes (RacePlanTable)
 trainingPlan/week-{1..13}        Base→Build→Peak→Taper→Race, weekly km/elev targets
 giHeatPlan/gi-heat-2026          probiotic start, gut-training ramp, heat acclimation
+dailyLogs/{date}                 Workout log (km, elevation, fuel, GI), strength session
 trips/{tripId}                   per-race rental car, hotel, packing list, drop-bag
 activities/{activityId}          Phase 2 — Strava-fed (not yet wired)
 trainingLog/{date}               Phase 2 — CTL/ATL/TSB rollups

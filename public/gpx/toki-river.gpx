@@ -38262,4 +38262,46 @@
 			</trkpt>
 		</trkseg>
 	</trk>
+	<wpt lat="35.987042" lon="139.237200">
+		<ele>191</ele>
+		<name>ふるさと農園</name>
+		<desc>Aid 1 / 14.5km</desc>
+		<extensions><cutoffMin>210</cutoffMin></extensions>
+	</wpt>
+	<wpt lat="35.957556" lon="139.211292">
+		<ele>786</ele>
+		<name>飯盛峠</name>
+		<desc>Aid 2 / 20.5km</desc>
+		<extensions><cutoffMin>300</cutoffMin></extensions>
+	</wpt>
+	<wpt lat="35.989652" lon="139.156831">
+		<ele>887</ele>
+		<name>県民の森</name>
+		<desc>Aid 3 / 28.0km</desc>
+		<extensions><cutoffMin>375</cutoffMin></extensions>
+	</wpt>
+	<wpt lat="36.005662" lon="139.190785">
+		<ele>864</ele>
+		<name>堂平天文台</name>
+		<desc>Aid 4 / 34.1km</desc>
+		<extensions><cutoffMin>445</cutoffMin></extensions>
+	</wpt>
+	<wpt lat="36.011875" lon="139.230680">
+		<ele>350</ele>
+		<name>慈光寺</name>
+		<desc>Aid 5 / 42.2km</desc>
+		<extensions><cutoffMin>540</cutoffMin></extensions>
+	</wpt>
+	<wpt lat="36.007367" lon="139.267990">
+		<ele>93</ele>
+		<name>本郷第２球場</name>
+		<desc>Aid 6 / 49.1km</desc>
+		<extensions><cutoffMin>595</cutoffMin></extensions>
+	</wpt>
+	<wpt lat="35.979662" lon="139.275414">
+		<ele>110</ele>
+		<name>フィニッシュ</name>
+		<desc>Finish / 56.2km</desc>
+		<extensions><cutoffMin>675</cutoffMin></extensions>
+	</wpt>
 </gpx>

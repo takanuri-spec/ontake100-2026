@@ -101,19 +101,35 @@ export interface GISymptom {
 export interface Trip {
   id: string
   raceId: string
-  rentalCarReservation: string    // confirmation number
-  departureDateTime: string       // ISO
-  returnDateTime: string
-  pickupLocation: string
+  rentalCar?: {
+    reservation: string          // confirmation number
+    company: string              // e.g. ニッポンレンタカー
+    departure: string            // ISO datetime
+    return: string
+    pickupLocation: string
+    returnLocation?: string
+    phone?: string
+    mapUrl?: string
+  }
   hotel?: {
     name: string
-    reservationNumber: string
+    reservation: string
     checkIn: string
     checkOut: string
+    phone?: string
+    mapUrl?: string
+    address?: string
     notes?: string
   }
+  schedule?: {
+    timing: string               // e.g. "2026-06-13 15:30"
+    description: string          // e.g. "下北沢駅前でレンタカーピックアップ"
+    location?: string
+    mapUrl?: string
+  }[]
   packingList: PackingItem[]
   dropBagContents?: string[]
+  notes?: string
 }
 
 export interface PackingItem {
