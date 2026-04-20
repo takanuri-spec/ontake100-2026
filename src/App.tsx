@@ -1,13 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-
-const navItems = [
-  { to: '/race-bible', label: 'レース聖典', icon: '🗺️' },
-  { to: '/training',   label: 'トレーニング', icon: '📅' },
-  { to: '/gi-heat',    label: 'GI/暑熱',     icon: '🌡️' },
-  { to: '/race-day',   label: 'レース当日',   icon: '⛰️' },
-  { to: '/retro',      label: '振り返り',     icon: '📊' },
-]
 
 function LoginScreen() {
   const { signIn } = useAuth()
@@ -36,6 +28,8 @@ function LoginScreen() {
 
 export default function App() {
   const { user, loading, signOut } = useAuth()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
   if (loading) {
     return (
@@ -49,44 +43,33 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 flex flex-col">
-      <header className="sticky top-0 z-50 bg-stone-900/95 backdrop-blur border-b border-stone-800">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-lg font-bold tracking-tight text-emerald-400">ONTAKE 100</span>
-            <span className="text-stone-500 text-sm">2026.07.19</span>
+      {!isHome && (
+        <header className="sticky top-0 z-50 bg-stone-900/95 backdrop-blur border-b border-stone-800">
+          <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Link
+                to="/"
+                className="text-stone-400 hover:text-stone-200 text-sm transition-colors"
+              >
+                ← ホーム
+              </Link>
+              <span className="text-stone-700 text-xs">|</span>
+              <span className="text-sm font-bold tracking-tight text-emerald-400">ONTAKE 100</span>
+            </div>
+            <button
+              onClick={signOut}
+              title="サインアウト"
+              className="text-xs text-stone-500 hover:text-stone-300"
+            >
+              <img src={user.photoURL ?? ''} alt="" className="w-7 h-7 rounded-full" />
+            </button>
           </div>
-          <button
-            onClick={signOut}
-            title="サインアウト"
-            className="text-xs text-stone-500 hover:text-stone-300"
-          >
-            <img src={user.photoURL ?? ''} alt="" className="w-7 h-7 rounded-full" />
-          </button>
-        </div>
-      </header>
+        </header>
+      )}
 
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
+      <main className={isHome ? 'flex-1' : 'flex-1 max-w-4xl mx-auto w-full px-4 py-6'}>
         <Outlet />
       </main>
-
-      <nav className="sticky bottom-0 bg-stone-900/95 backdrop-blur border-t border-stone-800 safe-area-inset-bottom">
-        <div className="max-w-4xl mx-auto flex">
-          {navItems.map(({ to, label, icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex-1 flex flex-col items-center py-2 px-1 text-xs gap-0.5 transition-colors ${
-                  isActive ? 'text-emerald-400' : 'text-stone-500 hover:text-stone-300'
-                }`
-              }
-            >
-              <span className="text-xl leading-none">{icon}</span>
-              <span>{label}</span>
-            </NavLink>
-          ))}
-        </div>
-      </nav>
     </div>
   )
 }
