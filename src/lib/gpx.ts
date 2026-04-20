@@ -5,9 +5,19 @@ export interface GpxPoint {
   cumDist: number // km from start
 }
 
+export interface GpxWaypoint {
+  lat: number
+  lon: number
+  ele: number
+  name: string
+  desc: string
+  cutoffMin: number // 0 = no cutoff
+}
+
 export interface ParsedGpx {
   name: string
   points: GpxPoint[] // downsampled, max ~1200 points
+  waypoints: GpxWaypoint[]
   totalDistKm: number
   totalAscent: number
   totalDescent: number
@@ -73,9 +83,25 @@ export async function parseGpx(url: string): Promise<ParsedGpx> {
   const step = Math.max(1, Math.floor(raw.length / 1200))
   const points = raw.filter((_, i) => i === 0 || i === raw.length - 1 || i % step === 0)
 
+  // Parse <wpt> waypoints (CP data injected into GPX)
+  const wptEls = Array.from(xmlDoc.querySelectorAll('wpt'))
+  const waypoints: GpxWaypoint[] = wptEls.map(wpt => {
+    const lat = parseFloat(wpt.getAttribute('lat') ?? '0')
+    const lon = parseFloat(wpt.getAttribute('lon') ?? '0')
+    const ele = parseFloat(wpt.querySelector('ele')?.textContent ?? '0')
+    const name = wpt.querySelector('name')?.textContent?.trim() ?? ''
+    const desc = wpt.querySelector('desc')?.textContent?.trim() ?? ''
+    const cutoffMin = parseInt(
+      wpt.querySelector('extensions > cutoffMin')?.textContent ?? '0',
+      10,
+    )
+    return { lat, lon, ele, name, desc, cutoffMin }
+  })
+
   return {
     name,
     points,
+    waypoints,
     totalDistKm: cumDist,
     totalAscent: Math.round(totalAscent),
     totalDescent: Math.round(totalDescent),

@@ -41,9 +41,9 @@ const GPX_URL: Record<string, string> = {
 }
 
 const START_OFFSET: Record<string, number> = {
-  'ontake100-2026': 0,
+  'ontake100-2026': 0,      // 00:00 start
   'sim-toki-river': 0,
-  'sim-hinohara':   0,
+  'sim-hinohara':   420,    // 07:00 start = 420min from midnight
 }
 
 const TRIP_ID: Record<string, string> = {
@@ -148,11 +148,27 @@ function CoursePanel({ raceId, aids, aidsLoading }: CoursePanelProps) {
         })),
       ]
 
+  // For sim races: build checkpoints from GPX waypoints if present, else Start+Finish only
   const simCheckpoints: Checkpoint[] = gpx
-    ? [
-        { id: 'start',  name: 'スタート',    distKm: 0, cutoffFromStartMin: 0 },
-        { id: 'finish', name: 'フィニッシュ', distKm: parseFloat(gpx.totalDistKm.toFixed(1)), cutoffFromStartMin: 0 },
-      ]
+    ? gpx.waypoints.length > 0
+      ? [
+          { id: 'start', name: 'スタート', distKm: 0, cutoffFromStartMin: 0 },
+          ...gpx.waypoints.map(w => ({
+            id: w.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            name: w.name,
+            distKm: parseFloat(
+              (gpx.points.reduce((b, p) =>
+                Math.abs(p.lat - w.lat) + Math.abs(p.lon - w.lon) <
+                Math.abs(b.lat - w.lat) + Math.abs(b.lon - w.lon) ? p : b
+              ).cumDist).toFixed(1)
+            ),
+            cutoffFromStartMin: w.cutoffMin,
+          })),
+        ]
+      : [
+          { id: 'start',  name: 'スタート',    distKm: 0, cutoffFromStartMin: 0 },
+          { id: 'finish', name: 'フィニッシュ', distKm: parseFloat(gpx.totalDistKm.toFixed(1)), cutoffFromStartMin: 0 },
+        ]
     : []
 
   const effectiveCheckpoints = aids.length > 0 ? checkpoints : simCheckpoints
@@ -172,7 +188,19 @@ function CoursePanel({ raceId, aids, aidsLoading }: CoursePanelProps) {
             <div className="rounded-2xl overflow-hidden border border-stone-100 shadow-sm">
               <CourseMap
                 gpx={gpx}
-                aids={aids.map(a => ({ distanceKm: a.distanceKm, name: a.name }))}
+                aids={
+                  aids.length > 0
+                    ? aids.map(a => ({ distanceKm: a.distanceKm, name: a.name }))
+                    : gpx.waypoints.map(w => ({
+                        distanceKm: parseFloat(
+                          (gpx.points.reduce((b, p) =>
+                            Math.abs(p.lat - w.lat) + Math.abs(p.lon - w.lon) <
+                            Math.abs(b.lat - w.lat) + Math.abs(b.lon - w.lon) ? p : b
+                          ).cumDist).toFixed(1)
+                        ),
+                        name: w.name,
+                      }))
+                }
               />
             </div>
           </div>
