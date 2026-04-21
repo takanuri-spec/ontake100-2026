@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import {
   AreaChart, Area, XAxis, YAxis, ReferenceLine, ReferenceDot,
   ResponsiveContainer, Tooltip,
@@ -233,11 +233,13 @@ function ElevationProfile({
   // タッチイベントでタッチX座標をkm値に変換するためのref
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // YAxis width=38, margin.left=-8 → プロット領域の左端オフセット
-  const PLOT_LEFT = 30  // 38 + (-8)
-  const PLOT_RIGHT = 4  // margin.right
+  // プロット領域のオフセット計算:
+  //   左: px-1 padding (4px) + YAxis width (38px) + margin.left (-8px) = 34px
+  //   右: px-1 padding (4px) + margin.right (4px) = 8px
+  const PLOT_LEFT = 34
+  const PLOT_RIGHT = 8
 
-  const touchKmFromEvent = (touch: React.Touch): number | null => {
+  const touchKmFromEvent = (touch: Touch): number | null => {
     if (!containerRef.current) return null
     const rect = containerRef.current.getBoundingClientRect()
     const plotWidth = rect.width - PLOT_LEFT - PLOT_RIGHT
@@ -246,19 +248,37 @@ function ElevationProfile({
     return ratio * totalKm
   }
 
+  // passive: false でスクロールをキャンセルしつつタッチ追従
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const onStart = (e: TouchEvent) => {
+      e.preventDefault()
+      const km = touchKmFromEvent(e.touches[0])
+      if (km !== null) onHover(km)
+    }
+    const onMove = (e: TouchEvent) => {
+      e.preventDefault()
+      const km = touchKmFromEvent(e.touches[0])
+      if (km !== null) onHover(km)
+    }
+    const onEnd = () => onHover(null)
+    el.addEventListener('touchstart', onStart, { passive: false })
+    el.addEventListener('touchmove',  onMove,  { passive: false })
+    el.addEventListener('touchend',   onEnd)
+    return () => {
+      el.removeEventListener('touchstart', onStart)
+      el.removeEventListener('touchmove',  onMove)
+      el.removeEventListener('touchend',   onEnd)
+    }
+  // totalKm と onHover が変わったら再登録
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalKm, onHover])
+
   return (
     <div
       className="h-44 px-1"
       ref={containerRef}
-      onTouchStart={e => {
-        const km = touchKmFromEvent(e.touches[0])
-        if (km !== null) onHover(km)
-      }}
-      onTouchMove={e => {
-        const km = touchKmFromEvent(e.touches[0])
-        if (km !== null) onHover(km)
-      }}
-      onTouchEnd={() => onHover(null)}
     >
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
