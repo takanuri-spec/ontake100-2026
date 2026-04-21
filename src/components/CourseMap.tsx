@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import {
   AreaChart, Area, XAxis, YAxis, ReferenceLine, ReferenceDot,
   ResponsiveContainer, Tooltip,
@@ -230,8 +230,36 @@ function ElevationProfile({
 
   const totalKm = parseFloat(gpx.totalDistKm.toFixed(2))
 
+  // タッチイベントでタッチX座標をkm値に変換するためのref
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // YAxis width=38, margin.left=-8 → プロット領域の左端オフセット
+  const PLOT_LEFT = 30  // 38 + (-8)
+  const PLOT_RIGHT = 4  // margin.right
+
+  const touchKmFromEvent = (touch: React.Touch): number | null => {
+    if (!containerRef.current) return null
+    const rect = containerRef.current.getBoundingClientRect()
+    const plotWidth = rect.width - PLOT_LEFT - PLOT_RIGHT
+    const x = touch.clientX - rect.left - PLOT_LEFT
+    const ratio = Math.max(0, Math.min(1, x / plotWidth))
+    return ratio * totalKm
+  }
+
   return (
-    <div className="h-44 px-1">
+    <div
+      className="h-44 px-1"
+      ref={containerRef}
+      onTouchStart={e => {
+        const km = touchKmFromEvent(e.touches[0])
+        if (km !== null) onHover(km)
+      }}
+      onTouchMove={e => {
+        const km = touchKmFromEvent(e.touches[0])
+        if (km !== null) onHover(km)
+      }}
+      onTouchEnd={() => onHover(null)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart
           data={data}
