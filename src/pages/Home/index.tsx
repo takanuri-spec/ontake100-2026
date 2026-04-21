@@ -18,7 +18,7 @@ export default function Home() {
       {/* ── Hero ── */}
       <div className="relative overflow-hidden" style={{ minHeight: '50vh' }}>
         <img
-          src="/images/2026-ontake100-bg2.jpg"
+          src="/images/2026-ontake100-bg1.webp"
           alt="OSJ ONTAKE 100 background"
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
