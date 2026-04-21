@@ -78,8 +78,8 @@ const CATEGORY_LABEL: Record<string, string> = {
 }
 
 const RACE_HERO_IMG: Record<string, string> = {
-  'ontake100-2026': '/images/2026-ontake100-sp.webp',
-  'sim-toki-river': '/images/aroundtokiriver.jpg',
+  'ontake100-2026': '/images/2026-ontake100-bg2.jpg',
+  'sim-toki-river': '/images/sim-toki-river-bg.jpg',
   'sim-hinohara':   '/images/suikajunnrei.avif',
 }
 
